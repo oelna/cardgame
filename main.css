@@ -17,7 +17,7 @@ html {
 	margin-top: 5rem;
 	display: flex;
 	gap: 1rem;
-	width: min(65ch, 95vw);
+	width: min(67ch, 95vw);
 	background-color: #fff;
 	box-shadow: 0 6px 16px hsla(0, 0%, 0%, 0.15);
 	padding: 1rem;

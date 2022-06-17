@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Cards</title>
+
+	<link rel="stylesheet" href="./main.css" />
+
+	<script src="https://unpkg.com/vue@3" defer></script>
+	<script type="module" src="./cards.js" defer></script>
+</head>
+<body>
+
+	<div id="app">
+		<div class="location">
+			<ul class="hand cardlist">
+				<li v-for="card in hand" :class="'color-' + card.color" @click="play(card)">
+					{{ card.color }}
+				</li>
+			</ul>
+			<p>Your hand ({{ hand.length }}/{{handSize}})</p>
+		</div>
+		<div class="location">
+			<ul class="yard cardlist">
+				<li v-for="card in yard" :class="'color-' + card.color">
+					{{ card.color }}
+				</li>
+			</ul>
+			<p>Graveyard ({{ yard.length }})</p>
+		</div>
+		<div class="location">
+			<ul class="deck cardlist">
+				<li v-for="card in deck" :class="'color-' + card.color">
+					{{ card.color }}
+				</li>
+			</ul>
+			<p>Deck ({{ deck.length }}/{{deckSize}})</p>
+		</div>
+		<div class="location">
+			<p><button @click="draw(1)">Draw 1</button></p>
+			<p><button @click="restart(1)">Restart</button></p>
+
+		</div>
+	</div>
+
+</body>
+</html>

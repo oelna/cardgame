@@ -1,19 +1,62 @@
 
 class random {
 
-	constructor () {
+	constructor (seed) {
 		this.crypto = (typeof window.crypto.getRandomValues === 'function');
-	
+
 		this.intMin = Number.MIN_VALUE;
 		this.intMax = Number.MAX_VALUE;
-	}	
-	
-	random () {
-		if (this.crypto) {
-			return window.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295;
-		}
 
-		return Math.random();
+		// prepare a valid seed from alphanumeric input
+		this.seed = seed || this.makeSeed();
+		this._seed = this.makeHash(this.seed);
+
+		// fire up the generator
+		this.random = this.mulberry32(this._seed);
+	}
+
+	mulberry32 (a) { // https://stackoverflow.com/a/47593316/3625228
+		return function () {
+			var t = a += 0x6D2B79F5;
+			t = Math.imul(t ^ t >>> 15, t | 1);
+			t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+			return ((t ^ t >>> 14) >>> 0) / 4294967296;
+		}
+	}
+
+	makeHash (str) { // https://stackoverflow.com/a/8831937/3625228
+		str = str.toString();
+		let hash = 0;
+		for (let i = 0, len = str.length; i < len; i++) {
+			let chr = str.charCodeAt(i);
+			hash = (hash << 5) - hash + chr;
+			hash |= 0; // Convert to 32bit integer
+		}
+		return hash;
+	}
+
+	makeSeed () {
+		// todo: verify this works properly
+		if (this.crypto) {
+			var o = new Uint32Array(1);
+			window.crypto.getRandomValues(o);
+			return o[0];
+		} else {
+			return Math.floor(Math.random() * Math.pow(2, 32));
+		}
+	}
+
+	getState () {
+		return this.seed;
+	}
+
+	setState (seed) {
+		if (!seed) return;
+
+		console.log('setting seed to', seed);
+		this.seed = seed;
+		this._seed = this.makeHash(this.seed);
+		this.random = this.mulberry32(this._seed);
 	}
 
 	bool () {

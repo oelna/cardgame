@@ -6,41 +6,65 @@
 
 	<link rel="stylesheet" href="./main.css" />
 
+	<!-- shoelace full -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.76/dist/themes/light.css" />
+	<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.76/dist/shoelace.js" defer></script>
+
 	<script src="https://unpkg.com/vue@3" defer></script>
 	<script type="module" src="./cards.js" defer></script>
 </head>
 <body>
 
 	<div id="app">
-		<div class="location">
-			<ul class="hand cardlist">
-				<li v-for="card in hand" :class="'color-' + card.color" @click="play(card)">
+		<div class="location hand">
+			<ul class="cardlist"><!-- images class toggles card … images -->
+				<li v-for="(card, index) in hand" :data-index="index" :class="'color-' + card.color" @click="play(card)" :data-rotation="getCardShift(index,hand.length)" :style="{ 'transform': 'rotate('+getCardRotation(index,hand.length)+'deg) ' + 'translateY('+getCardShift(index,hand.length)+'px)' }">
 					{{ card.color }}
 				</li>
 			</ul>
 			<p>Your hand ({{ hand.length }}/{{handSize}})</p>
+			<p><sl-progress-bar :value="100/handSize*hand.length" style="--height: 6px;"></sl-progress-bar></p>
 		</div>
-		<div class="location">
-			<ul class="yard cardlist">
+		<div class="location yard">
+			<ul class="cardlist">
 				<li v-for="card in yard" :class="'color-' + card.color">
 					{{ card.color }}
 				</li>
 			</ul>
 			<p>Graveyard ({{ yard.length }})</p>
 		</div>
-		<div class="location">
-			<ul class="deck cardlist">
+		<div class="location deck">
+			<ul class="cardlist">
 				<li v-for="card in deck" :class="'color-' + card.color">
 					{{ card.color }}
 				</li>
 			</ul>
 			<p>Deck ({{ deck.length }}/{{deckSize}})</p>
+			<p><sl-progress-bar :value="100/deckSize*deck.length" style="--height: 6px;"></sl-progress-bar></p>
+			
 		</div>
-		<div class="location">
+		<div class="location nav">
 			<p><button @click="draw(1)">Draw 1</button></p>
 			<p><button @click="restart(1)">Restart</button></p>
 
+			<div class="seed">
+				<input type="text" id="seed-input" />
+				<button id="set-seed" @click="setSeed()">Set Seed</button>
+				<p>Current seed: {{ seed }}</p>
+			</div>
+			
 		</div>
+	</div>
+
+	<div class="messages">
+		<sl-alert class="hand-full" variant="warning" duration="3000" closable>
+			<strong>Hand</strong><br />
+			Your hand is full!
+		</sl-alert>
+		<sl-alert class="deck-empty" variant="danger" duration="3000" closable>
+			<strong>Deck</strong><br />
+			There are no cards left in your deck!
+		</sl-alert>
 	</div>
 
 </body>
